@@ -1,22 +1,19 @@
-# Install sonarqube
-
-SonarQube installation
--------------------------
 sudo yum update -y
 sudo yum install vim wget curl unzip -y
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.rpm
+sudo yum -y install ./jdk-17_linux-x64_bin.rpm
 
+java --version
+sudo yum install git -y
+
+-----------------------------------------------
 Create a user for sonar
-----------------------------
+-----------------------------------------------
 sudo useradd sonar
 sudo passwd sonar
-----------------------
-Install Java 11 on CentOS 7
-------------------------------------
-sudo yum install java-11-openjdk-devel -y
-java --version
 -----------------------------------------------
 Install and configure PostgreSQL
----------------------------------------
+-----------------------------------------------
 sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 sudo yum -y install postgresql14-server postgresql14
 sudo /usr/pgsql-14/bin/postgresql-14-setup initdb
@@ -25,6 +22,7 @@ sudo vim /var/lib/pgsql/14/data/pg_hba.conf
 /var/lib/pgsql/14/data/postgresql.conf			=>>>>> #(listen_addresses = '*')
 sudo vim /var/lib/pgsql/14/data/pg_hba.conf
 sudo systemctl restart postgresql-14
+sudo systemctl status postgresql-14
 ----------------------------------------------------------------------
 Set PostgreSQL admin user
 ----------------------------------------------
@@ -40,7 +38,7 @@ psql
 CREATE USER sonarqube WITH PASSWORD 'postgresql';
 GRANT ALL PRIVILEGES ON DATABASE sonarqube to sonarqube;
 \q
-------------------------------------------------------------
+-------------------------------------------------------
 Fetch and install SonarQube
 -----------------------------------------
 sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.4.0.54424.zip
@@ -56,6 +54,7 @@ sonar.jdbc.password=postgresql
 sudo chown -R sonar:sonar /opt/sonarqube
 sudo mkdir -p /var/sonarqube
 sudo chown -R sonar:sonar /var/sonarqube
+----------------------------------------------
 ----------------------------------------------
 sudo vi /etc/systemd/system/sonarqube.service
 [Unit]
@@ -90,23 +89,22 @@ sudo systemctl start firewalld
 sudo systemctl status firewalld
 sudo firewall-cmd --permanent --add-port=9000/tcp && sudo firewall-cmd --reload
 -------------------------------------------------------------
-Access the Web User Interface
-http://server-ip:9000
 
-=======================================================================================================================
-
-Install Jenkins
-
-sudo wget -O /etc/yum.repos.d/jenkins.repo \
-    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+-----------------------------------------------------------------
+Jenkins Install
+-------------------------------------------------------------
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-sudo dnf upgrade
-# Add required dependencies for the jenkins package
-sudo dnf install fontconfig java-17-openjdk
-sudo dnf install jenkins
+yum install fontconfig java-17-openjdk
+yum install jenkins
 sudo systemctl daemon-reload
-
 sudo systemctl status firewalld
 sudo systemctl start firewalld
 sudo systemctl status firewalld
-sudo firewall-cmd --permanent --add-port=8080/tcp && sudo firewall-cmd --reload
+sudo firewall-cmd --permanent --add-port=8080/tcp && sudo firewall-cmd --reload  
+systemctl start jenkins.service
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Add node
+-----------------------------------------------------------------
