@@ -108,3 +108,20 @@ systemctl start jenkins.service
 -----------------------------------------------------------------
 Add node
 -----------------------------------------------------------------
+
+status check:
+
+systemctl start jenkins.service
+systemctl start sonarqube.service
+
+systemctl status jenkins.service
+systemctl status sonarqube.service
+
+systemctl restart jenkins.service
+systemctl restart sonarqube.service
+
+
+sudo systemctl daemon-reload
+sudo systemctl start sonarqube.service
+sudo systemctl enable sonarqube.service
+systemctl status sonarqube.service
